@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env node
+
+var hinter = require(process.env['TM_BUNDLE_SUPPORT'] + '/hinter');
+var source = require('fs').readFileSync('/dev/stdin').toString();
+
+hinter.html(source, function(result) {
+    console.log(result);
+});</string>
+	<key>input</key>
+	<string>document</string>
+	<key>inputFormat</key>
+	<string>text</string>
+	<key>keyEquivalent</key>
+	<string>^l</string>
+	<key>name</key>
+	<string>Hint</string>
+	<key>outputCaret</key>
+	<string>afterOutput</string>
+	<key>outputFormat</key>
+	<string>html</string>
+	<key>outputLocation</key>
+	<string>newWindow</string>
+	<key>scope</key>
+	<string>source.js</string>
+	<key>uuid</key>
+	<string>9E3CE6D4-6147-44CE-9834-86DDFE5E1050</string>
+	<key>version</key>
+	<integer>2</integer>
+</dict>
+</plist>
