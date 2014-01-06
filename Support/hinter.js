@@ -17,6 +17,7 @@ module.exports = {
     }
 };
 
+// Takes source code and a callback function, returns an array of JSHint errors.
 function hint(source, cb) {
     var called = false;
     var args = ['-'];
@@ -49,6 +50,7 @@ function hint(source, cb) {
 
 var lineRegex = /^.*?: line (\d+), col (\d+), (.+)$/;
 
+// Takes raw JSHint output and parses it into a nice array of error messages
 function parse(data) {
     return data.split('\n').slice(0, -2).reduce(function(memo, raw) {
         var matches = raw.match(lineRegex);
@@ -63,20 +65,26 @@ function parse(data) {
     }, []);
 }
 
+// Strip everything but newlines
 function stripEverythingButNewlines(text) {
     return text.replace(/.*/g, '');
 }
 
+// If input is an HTML file, strip out all HTML (leave only newlines)
 function prepareSource(source) {
-    // Strip out all HTML (leave only newlines)
     if (process.env.TM_SCOPE.match('text.html')) {
-        return source.replace(/^(.|\r?\n)*?<script[^>]*\>/m, stripEverythingButNewlines)
-            .replace(/<\/script[^>]*>(.|\r?\n)*?<script[^>]*\>/gm, stripEverythingButNewlines)
-            .replace(/<\/script[^>]*>(.|\r?\n)*$/m, stripEverythingButNewlines);
+        if (true||source.match(/<script[^>]*>.*<\/script[^>]*>/m)) {
+            return source.replace(/^(.|\r?\n)*?<script[^>]*>/m, stripEverythingButNewlines)
+                .replace(/<\/script[^>]*>(.|\r?\n)*?<script[^>]*>/gm, stripEverythingButNewlines)
+                .replace(/<\/script[^>]*>(.|\r?\n)*$/m, stripEverythingButNewlines);
+        } else {
+            return '';
+        }
     }
     return source;
 }
 
+// Return a simple textual representation of error messages
 function formatSimple(errors, limit) {
     if (limit === undefined) {
         limit = 5;
@@ -108,6 +116,7 @@ function wrapHtml(content) {
     '</html>';
 }
 
+// Return HTML formatted error messages
 function formatHtml(errors) {
     if (errors.length === 0) {
         return wrapHtml('<p>No errors!</p>');
