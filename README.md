@@ -7,7 +7,7 @@ Installation
 ------------
 
     cd ~/Library/Avian/Bundles
-    git clone https://github.com/arnemart/Hintmate.git
+    git clone https://github.com/arnemart/Hintmate.tmbundle.git
 
 And that should do it.
 
