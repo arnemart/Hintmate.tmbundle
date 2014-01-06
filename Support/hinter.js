@@ -1,5 +1,8 @@
-var hinter = process.env.TM_HINTMATE_HINTER || 'node_modules/.bin/jshint';
+var hinter = process.env.TM_HINTMATE_HINTER || process.env.TM_BUNDLE_SUPPORT + '/node_modules/.bin/jshint';
 var spawn = require('child_process').spawn;
+var path = require('path');
+var fs = require('fs');
+var cwd = process.env.TM_PROJECT_DIRECTORY || process.env.TM_BUNDLE_SUPPORT;
 
 module.exports = {
     simple: function(source, cb) {
@@ -16,9 +19,23 @@ module.exports = {
 
 function hint(source, cb) {
     var called = false;
-    var h = spawn(hinter, ['-'], {
-        cwd: process.env.TM_BUNDLE_SUPPORT
+    var args = ['-'];
+    var config = process.env.TM_HINTMATE_CONFIG || findFile('.jshintrc', cwd);
+    if (config) {
+        args.unshift('--config', config);
+    }
+    var h = spawn(hinter, args, {
+        cwd: cwd
     });
+    if (process.env.TM_HINTMATE_TRANSFORM) {
+        var t = spawn(process.env.TM_HINTMATE_TRANSFORM, [], {
+            cwd: cwd
+        });
+        t.stdout.pipe(h.stdin);
+        t.stdin.end(prepareSource(source));
+    } else {
+        h.stdin.end(prepareSource(source));
+    }
     h.stdout.on('data', function(data) {
         called = true;
         cb(parse(data.toString()));
@@ -28,13 +45,9 @@ function hint(source, cb) {
             cb([]);
         }
     });
-    h.stderr.on('data', function(data) {
-        console.log('error', data.toString());
-    });
-    h.stdin.end(prepareSource(source));
 }
 
-var lineRegex = /^stdin: line (\d+), col (\d+), (.+)$/;
+var lineRegex = /^.*?: line (\d+), col (\d+), (.+)$/;
 
 function parse(data) {
     return data.split('\n').slice(0, -2).reduce(function(memo, raw) {
@@ -103,4 +116,23 @@ function formatHtml(errors) {
             return html + '<li><a href="txmt://open?url=file://' + process.env.TM_FILEPATH + '&line=' + error.line + '&column=' + error.col + '"><span class="dim">Line ' + error.line + ', col ' + error.col + ':</span> ' + error.message + '</a></li>';
         }, '') + '</ul>');
     }
+}
+
+// Stolen from jshint cli.js
+function findFile(name, dir) {
+    dir = dir || process.cwd();
+
+    var filename = path.normalize(path.join(dir, name));
+
+    var parent = path.resolve(dir, "../");
+
+    if (fs.existsSync(filename)) {
+        return filename;
+    }
+
+    if (dir === parent) {
+        return null;
+    }
+
+    return findFile(name, parent);
 }
