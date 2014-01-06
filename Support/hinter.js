@@ -32,13 +32,8 @@ function hint(source, cb) {
     if (process.env.TM_HINTMATE_TRANSFORM) {
         var t = exec(process.env.TM_HINTMATE_TRANSFORM, {
             cwd: cwd
-        });
-        var stderr = '';
-        t.stderr.on('data', function(data) {
-            stderr += data.toString() + '\n';
-        });
-        t.on('close', function(code) {
-            if (code !== 0) {
+        }, function(err, stdout, stderr) {
+            if (stderr) {
                 if (process.env.TM_HINTMATE_TRANSFORM_ERROR) {
                     var error = stderr.match(new RegExp(process.env.TM_HINTMATE_TRANSFORM_ERROR));
                     if (error && !called) {
@@ -149,7 +144,7 @@ function formatHtml(errors) {
     if (errors.length === 0) {
         return wrapHtml('<p>No errors!</p>');
     } else if (typeof errors === 'string') {
-        return wrapHtml('<p>' + errors + '</p>');
+        return wrapHtml('<p>' + errors.replace('\n', '<br>') + '</p>');
     } else {
         return wrapHtml('<ul>' + errors.reduce(function(html, error) {
             return html + '<li><a href="txmt://open?url=file://' + process.env.TM_FILEPATH + '&line=' + error.line + '&column=' + error.col + '"><span class="dim">Line ' + error.line + ', col ' + error.col + ':</span> ' + error.message + '</a></li>';
