@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>contactEmailRot13</key>
-	<string></string>
+	<string>nz@nheyvra.arg</string>
 	<key>contactName</key>
 	<string>Arne Martin Aurlien</string>
 	<key>description</key>
-	<string>New shiny bundle for X.</string>
+	<string>Simple JSHint bundle for Textmate.</string>
 	<key>name</key>
 	<string>Hintmate</string>
 	<key>uuid</key>
