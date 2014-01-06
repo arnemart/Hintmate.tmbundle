@@ -128,7 +128,7 @@ function wrapHtml(content) {
     '<meta charset="UTF-8" />' +
     '<title>Hintmate</title>' +
     '<style type="text/css">' +
-    'body { background-color: #222; color: #ddd }' +
+    'body { font-family: helvetica, sans-serif; background-color: #222; color: #ddd }' +
     'a, a:visited, a:active { color: white }' +
     'a { display: block; margin: 5px; padding: 6px 4px; border: 1px solid #444; border-radius: 5px; text-decoration: none; }' +
     '.dim { color: #999 }' +
