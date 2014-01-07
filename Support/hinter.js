@@ -1,3 +1,4 @@
+/*jshint node:true*/
 var hinter = process.env.TM_HINTMATE_HINTER || process.env.TM_BUNDLE_SUPPORT + '/node_modules/.bin/jshint';
 var cp = require('child_process');
 var path = require('path');
@@ -80,7 +81,9 @@ function parse(data) {
             });
         }
         return memo;
-    }, []);
+    }, []).sort(function(a, b) {
+        return a.line > b.line;
+    });
 }
 
 // Strip everything but newlines
@@ -145,7 +148,7 @@ function formatHtml(errors) {
     } else if (typeof errors === 'string') {
         return wrapHtml('<p>' + errors.replace('\n', '<br>') + '</p>');
     } else {
-        return wrapHtml('<ul>' + errors.reduce(function(html, error) {
+        return wrapHtml('<p>' + errors.length + ' error' + (errors.length === 1 ? '' : 's') + '</p><ul>' + errors.reduce(function(html, error) {
             return html + '<li><a href="txmt://open?url=file://' + process.env.TM_FILEPATH + '&line=' + error.line + '&column=' + error.col + '"><span class="dim">Line ' + error.line + ', col ' + error.col + ':</span> ' + error.message + '</a></li>';
         }, '') + '</ul>');
     }
