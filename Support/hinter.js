@@ -22,7 +22,7 @@ module.exports = {
 function hint(source, cb) {
     var called = false;
     var args = ['-'];
-    var config = process.env.TM_HINTMATE_CONFIG || findFile('.jshintrc', cwd);
+    var config = process.env.TM_HINTMATE_CONFIG || findConfigFile(cwd);
     if (config) {
         args.unshift('--config', config);
     }
@@ -152,21 +152,16 @@ function formatHtml(errors) {
     }
 }
 
-// Stolen from jshint cli.js
-function findFile(name, dir) {
-    dir = dir || process.cwd();
-
-    var filename = path.normalize(path.join(dir, name));
-
-    var parent = path.resolve(dir, "../");
-
+function findConfigFile(dir) {
+    var filename = path.normalize(path.join(dir, '.jshintrc'));
     if (fs.existsSync(filename)) {
         return filename;
     }
 
+    var parent = path.resolve(dir, '../');
     if (dir === parent) {
         return null;
     }
 
-    return findFile(name, parent);
+    return findConfigFile(parent);
 }
