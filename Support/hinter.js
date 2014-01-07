@@ -33,7 +33,7 @@ function hint(source, cb) {
         var t = exec(process.env.TM_HINTMATE_TRANSFORM, {
             cwd: cwd
         }, function(err, stdout, stderr) {
-            if (stderr) {
+            if (err && err.code !== 0) {
                 if (process.env.TM_HINTMATE_TRANSFORM_ERROR) {
                     var error = stderr.match(new RegExp(process.env.TM_HINTMATE_TRANSFORM_ERROR));
                     if (error && !called) {
