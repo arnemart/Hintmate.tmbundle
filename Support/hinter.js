@@ -1,6 +1,5 @@
 var hinter = process.env.TM_HINTMATE_HINTER || process.env.TM_BUNDLE_SUPPORT + '/node_modules/.bin/jshint';
-var spawn = require('child_process').spawn;
-var exec = require('child_process').exec;
+var cp = require('child_process');
 var path = require('path');
 var fs = require('fs');
 var cwd = process.env.TM_PROJECT_DIRECTORY || process.env.TM_BUNDLE_SUPPORT;
@@ -26,11 +25,11 @@ function hint(source, cb) {
     if (config) {
         args.unshift('--config', config);
     }
-    var h = spawn(hinter, args, {
+    var h = cp.spawn(hinter, args, {
         cwd: cwd
     });
     if (process.env.TM_HINTMATE_TRANSFORM) {
-        var t = exec(process.env.TM_HINTMATE_TRANSFORM, {
+        var t = cp.exec(process.env.TM_HINTMATE_TRANSFORM, {
             cwd: cwd
         }, function(err, stdout, stderr) {
             if (err && err.code !== 0) {
