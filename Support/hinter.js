@@ -75,14 +75,14 @@ function parse(data) {
         var matches = raw.match(lineRegex);
         if (matches) {
             memo.push({
-                line: matches[1],
-                col: matches[2],
+                line: parseInt(matches[1], 10),
+                col: parseInt(matches[2], 10),
                 message: matches[3]
             });
         }
         return memo;
     }, []).sort(function(a, b) {
-        return a.line > b.line;
+        return a.line - b.line;
     });
 }
 
